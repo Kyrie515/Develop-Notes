@@ -237,3 +237,59 @@ print(l) #output: [1, 2, 10]
 #### 二、del和垃圾回收
 
 在CPython中，垃圾回收使用的主要是引用计数算法，每个对象会统计有多少引用指向自己。当引用计数归零时，对象就立即销毁：CPython会在对象上调用`__del__`方法。
+
+
+
+## 九、符合Python风格的对象
+
+通过实现一个二维向量模型，涵盖以下主题：
+
+- 支持用于生成对象其他表示形式的内置函数（如`__repr__`）
+- 使用一个类方法实现备选构造方法
+- 扩展内置的`format()`函数和`str.format()`方法使用的格式微语言
+- 实现只读属性
+- 把对象变成可散列的，可以作为`dict`的键
+- 使用`__slots__`节省内存
+- 如何以及何时使用`@classmethod`和`@staticmethod`装饰器
+- Python的私有属性和受保护属性的用法、约定和局限
+
+####  1.对象表示形式
+
+`repr()`和`str()`方法是`__repr__`和`__str__`特殊方法提供的方法，前者以便于开发者理解的形式返回对象的字符串表示，后者以便于用户理解的方式返回对象的字符串表示。
+
+```python
+from array import array
+import math
+
+class Vector2d:
+  # class attribute. 在实例和字节序之间的转换用
+  typecode = 'd'
+  
+  def __init__(self, x, y):
+    self.x = float(x)
+    self.y = float(y)
+    
+  def __iter__(self):#定义__iter__方法， 把Vector2d实例变成可迭代对象，这样可以提供拆包
+    return (i for i in (self.x, self.y))
+  
+  def __repr__(self):
+    class_name = type(self).__name__
+    return '{}({!r}, {!r})'.format(class_name, *self) #因为已经实现可迭代方法，所以{!r}会把self的各个分量获取
+  
+  def __str__(self):
+    return str(tuple(self))
+  
+  def __bytes__(self):
+    return (bytes([ord(self.typecode)]) + bytes(array(self.typecode, self)))
+  
+  def __eq__(self, other):
+    return tuple(self) == tuple(other)
+  
+  def __abs__(self):
+    return math.hypot(self.x, self.y) #对于一个向量来说模是两个方向的直角三角形斜边长
+  
+  def __bool__(self):
+    return bool(abs(self))
+    
+```
+
