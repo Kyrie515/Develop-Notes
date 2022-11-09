@@ -290,6 +290,51 @@ class Vector2d:
   
   def __bool__(self):
     return bool(abs(self))
+  
+  #从bytes对象转化为Vector2d类。定义一个类方法
+  @classmethod
+  def frombytes(cls, octets):
+    typecode = chr(octets[0])#从第一个字节获取typecode
+    memv = memoryview(octets[1:]).cast(typecode)
+    return cls(*memv)
+```
+
+#### 2.`classmethod`和`staticmethod`的行为区别
+
+`classmethod`无论在何时调用时第一个参数永远是类。而`staticmethod`行为与普通函数无疑。例如下面这个例子
+
+```python
+Class Demo:
+  @classmethod
+  def clazzmeth(*args):
+    return args
+  @staticmethod
+  def staticmeth(*args):
+    return args
+  
+print(Demo.clazzmeth('spam'))
+
+#output: (<class '__main__.Demo'>, 'spam')
     
+```
+
+关于如何使用`staticmethod`和`classmethod`，阅读`Julien Danjou`的一篇博客，题为`The Definitive Guide on How to Use Static, Class or Abstract Methods in Python`
+
+在平时用的时候也许会觉得`staticmethod`和`classmethod`几乎没有区别，甚至觉得多余。但读完上述博客时，在继承的时候会出问题。
+
+比如下面这个例子，如果使用静态方法的话，当我们在子类中调用第一个`get_radius_1()`方法，它通过类名称去访问类属性，但是此时类意见变成了子类，`Pizza`这个名称没有被定义，就会报错。
+
+```python
+Class Pizza:
+  radius = 42 #这是一个类属性，不用创造实例即可访问
+  @staticmethod
+  def get_radius_1():
+    #如果要从静态方法中获取类属性，只能通过类访问
+    return Pizza().radius
+  
+  @classmethod
+  def get_radius_2(cls):
+    #在这里，因为第一个参数是类，可以通过第一个参数访问类属性
+    return cls.radius
 ```
 
