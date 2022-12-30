@@ -10,7 +10,7 @@ pip3 install virtualenv
 pip3 install virtualenvwrapper
 ```
 
-We are going to modify your .bashrc file by adding a row that will adjust every new virtual environment to use Python 3. We will point virtual environments to the directory we created above (.virtualenv) and we will also point to the locations of the virtualenv and virtualenvwrapper.
+We are going to modify your .bashrc file by adding a row that will adjust every new virtual environment to use Python 3. We will point virtual environments to the directory we created above (.virtualenvs) and we will also point to the locations of the virtualenv and virtualenvwrapper.
 
 #### 2. Modify the .bashrc file
 
@@ -27,6 +27,8 @@ export WORKON_HOME=$HOME/.virtualenvs
 export VIRTUALENVWRAPPER_VIRTUALENV=/home/user_of_yourself/.local/bin/virtualenv
 source ~/.local/bin/virtualenvwrapper.sh
 ```
+
+**about the place of the file `virtualenvwrapper.sh`, on ubuntu 12.04 LTS, installing through pip, it is installed to `/usr/local/bin/virtualenvwrapper.sh`; And if you are using Ubuntu 16.04 or later, it is installed to `~/.local/bin/virtualenvwrapper.sh`**
 
 And do
 
