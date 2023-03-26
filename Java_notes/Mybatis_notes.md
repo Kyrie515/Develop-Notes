@@ -1,8 +1,8 @@
 ## Multi-table query using resultMap in Mybatis
 
-### 1. 1 to 1 query using Mybatis
+### 1. One to One Query in Mybatis
 
-`resultMap` is a powerful tag in Mybatis mapper config and we can use it to query for more than one table and associate the results by their primary keys. For example, I have two Mysql tables named `account` and `user`:
+`resultMap` is a powerful tag in Mybatis mapper config and we can use it to query for more than one table and associate the results by their primary keys. For example, I have two Mysql tables named `account` and `user` and two Java class for both:
 
 `user`
 
@@ -28,6 +28,29 @@ create table account
     constraint FK_Reference
         foreign key (uid) references user (id)
 )
+```
+
+class `User`
+
+```java
+@Data
+public class User implements Serializable {
+    private Integer id;
+    private String username;
+    private String password;
+}
+```
+
+class `Account`
+
+```java
+@Data
+public class Account implements Serializable {
+    private Integer id;
+    private Integer uid;
+    private Double money;
+    private User user;
+}
 ```
 
 we can figure out that table`account` is associated to the table`user` by the foreign key `account(uid)`.So if we want to find out all the information about an account(include its user, username and password), we can achieve this easily in `SQL`:
@@ -84,3 +107,60 @@ One of the sub-tags that enables the `resultMap` to achieve union-query is `asso
 - `property`: It indicates the filed of a JavaBean which will be associated.
 - `column`: It indicates the field of the JavaBean that can be passed to enable the union-query.
 - `javaType`: It indicates this **association** could be mapped to which Java class.
+
+### 2. One-to-Many Query in Mybatis
+
+Let's think about how to query all the information of a `User` class instance which is defined like this:
+
+class `User`:
+
+```java
+@Data
+public class User implements Serializable {
+    private Integer id;
+    private String username;
+    private String password;
+    List<Account> accounts;
+}
+```
+
+Because there is a situation where one user could have more than one account, class `User` should have a member variable named accounts. And if we want to query all the information of a user using the following SQL:
+
+```sql
+select * from user u left outer join account a on u.id = a.uid;
+```
+
+we should write a `UserMapper.xml`like this:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.UserMapper">
+    <resultMap id="userAccountMap" type="domain.User">
+        <id property="id" column="id"></id>
+        <result property="username" column="username"></result>
+        <result property="password" column="password"></result>
+        <collection property="accounts" ofType="domain.Account">
+            <id property="id" column="aid"></id>
+            <result property="uid" column="uid"></result>
+            <result property="money" column="money"></result>
+        </collection>
+    </resultMap>
+
+    <select id="findAll" resultMap="userAccountMap">
+        select * from user u left outer join account a on u.id = a.uid;
+    </select>
+</mapper>
+```
+
+The new sub-tag of `resultMap` is `collection`.It should be configured by using two attributes:
+
+- `property`: It indicates which member variable of class `User` contains multiple results.
+- `ofType`: It indicates the multiple results of the collection belongs to which Java class.
+
+### 3. Many-to-Many Query in Mybatis
+
+To achieve this, we must focus on SQL instead of Mybatis syntax.
