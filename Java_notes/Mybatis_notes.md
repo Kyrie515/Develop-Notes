@@ -108,6 +108,34 @@ One of the sub-tags that enables the `resultMap` to achieve union-query is `asso
 - `column`: It indicates the field of the JavaBean that can be passed to enable the union-query.
 - `javaType`: It indicates this **association** could be mapped to which Java class.
 
+Mybatis also support annotation development, for example:
+
+```java
+package dao;
+
+import domain.Account;
+import org.apache.ibatis.annotations.One;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+
+public interface AccountMapper {
+
+    @Select("select * from account")
+    @Results(id = "accountMap", value = {
+            @Result(id = true, column = "id", property = "id"),
+            @Result(column = "money", property = "money"),
+            @Result(column = "uid", property = "uid"),
+            @Result(column = "uid", property = "user", one = @One(select = "dao.UserMapper.findById"))
+    })
+    List<Account> findAll();
+}
+```
+
+
+
 ### 2. One-to-Many Query in Mybatis
 
 Let's think about how to query all the information of a `User` class instance which is defined like this:
@@ -164,3 +192,27 @@ The new sub-tag of `resultMap` is `collection`.It should be configured by using 
 ### 3. Many-to-Many Query in Mybatis
 
 To achieve this, we must focus on SQL instead of Mybatis syntax.
+
+### 4. SqlMapConfig.xml Configuration
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org.dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <environments default="mysql">
+        <environment id="mysql">
+            <transactionManager type="JDBC"></transactionManager>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/JavaTester"/>
+                <property name="username" value=${username}/>
+                <property name="password" value=${password}/>
+            </dataSource>
+        </environment>
+    </environments>
+</configuration>
+```
+
