@@ -96,5 +96,63 @@ The life circle of singleton is the same as spring container(`ApplicationContext
 
 For muti-instance bean object, Spring framework creates it on lazy-load mode. This means the framework creates it for us when we use it. If we keep using the object, then the object is alive; after that, the object is destroyed by GC.
 
+### 3. The Dependency Injection in Spring 
 
+**The concept of DI: The IoC container injects the external resources required by an object into that object **
+
+Three ways to accomplish DI:
+
+- By constructor method.
+- By `setter` method.
+- By annotation.
+
+Here is a simple example to use DI by constructor:
+
+`ApplicationContext.xml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="accountService" class="account.impl.AccountServiceImpl">
+        <constructor-arg name="name" value="lcy"></constructor-arg>
+        <constructor-arg name="age" value="18" type="java.lang.Integer"></constructor-arg>
+        <constructor-arg name="date" ref="now"></constructor-arg>
+    </bean>
+    <bean id="now" class="java.util.Date"></bean>
+</beans>
+```
+
+`AccountServiceImpl.java`
+
+```java
+package account.impl;
+
+import account.IAccountService;
+import lombok.Data;
+
+import java.util.Date;
+
+@Data
+public class AccountServiceImpl implements IAccountService {
+
+    private String name;
+    private Integer age;
+    private Date date;
+    public AccountServiceImpl(String name, Integer age, Date date) {
+        this.name = name;
+        this.age = age;
+        this.date = date;
+    }
+    @Override
+    public void saveAccount(){
+        System.out.println("Save account " + this);
+    }
+
+}
+```
+
+we use xml configuration to accomplish injecting the `name`,`age` and `date` to the instance of class `AccountServiceImpl`
 
