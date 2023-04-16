@@ -200,13 +200,13 @@ There are four kinds of annotation in Spring. We will talk about this with the p
 
 2. Annotation for injecting data into object.
 
-​		`@Autowired`:inject data into object by it's class. We can use this annotation in method or variables.
+   `@Autowired`:inject data into object by it's class. We can use this annotation in method or variables.
 
-​        `@Qulifier`:Based on injecting data into object by it's class, this annotation could inject data into multi objects which have the same class by their names. This annotation has the attribute `value`, which is used to specify the id of bean that is injected.
+   `@Qulifier`:Based on injecting data into object by it's class, this annotation could inject data into multi objects which have the same class by their names. This annotation has the attribute `value`, which is used to specify the id of bean that is injected.
 
-​		`@Resource`:Combine the two annotation `@Autowired` and `@Qulifier`
+   `@Resource`:Combine the two annotation `@Autowired` and `@Qulifier``
 
-​		`@Value`: This annotation is used to inject basic data types `String` type.	
+   `@Value`: This annotation is used to inject basic data types `String` type.	
 
 3. Annotation for manage scope of object.
 
