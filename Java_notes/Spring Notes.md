@@ -1,5 +1,29 @@
 # Spring Notes
 
+**The following code is common `applicationContext.xml`**:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop" 
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       https://www.springframework.org/schema/mvc/spring-mvc.xsd 
+       http://www.springframework.org/schema/aop 
+       https://www.springframework.org/schema/aop/spring-aop.xsd 
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+```
+
+
+
 ### 1. IoC in Spring 
 
 The main purpose of IoC is resolving inter-procedural couplings.
@@ -156,3 +180,36 @@ public class AccountServiceImpl implements IAccountService {
 
 we use xml configuration to accomplish injecting the `name`,`age` and `date` to the instance of class `AccountServiceImpl`
 
+### 4. Annotation Development in Spring
+
+There are four kinds of annotation in Spring. We will talk about this with the previous xml configuration
+
+```xml
+<bean id="" class="" scope="" init-method="" destroy-method="">
+    <property name="" value="" | ref=""></property>
+</bean>
+```
+
+1. Annotation for creating object.
+
+   `@Component`: This annotation is to store the object into the Spring container;
+
+   - attribute `value`: This attribute is to specify the id of the object. The default value of this attribute is the name of the class and the first letter is lowercase.
+
+   `@Controller` `@Service` `@Repository`: These three annotation has the same function as `@Component`, the purpose of these annotation is to make the project layered and clean. The `@Controller` is used in UI layer, the `@Service` is used in BLL layer and the `@Repository` is used in DAO layer.
+
+2. Annotation for injecting data into object.
+
+​		`@Autowired`:inject data into object by it's class. We can use this annotation in method or variables.
+
+​        `@Qulifier`:Based on injecting data into object by it's class, this annotation could inject data into multi objects which have the same class by their names. This annotation has the attribute `value`, which is used to specify the id of bean that is injected.
+
+​		`@Resource`:Combine the two annotation `@Autowired` and `@Qulifier`
+
+​		`@Value`: This annotation is used to inject basic data types `String` type.	
+
+3. Annotation for manage scope of object.
+
+   `@Scope`
+
+4. Annotation related to life cycle.
